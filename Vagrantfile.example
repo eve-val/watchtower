@@ -1,0 +1,47 @@
+# -*- mode: ruby -*-
+
+$bootstrap = <<SHELLSCRIPT
+
+sudo apt-get update
+
+sudo apt-get -y install postgresql postgresql-server-dev-9.3
+sudo -u postgres psql -c "CREATE USER vagrant WITH PASSWORD 'watchtower'"
+sudo -u postgres psql -c "CREATE DATABASE watchtower WITH OWNER = vagrant"
+
+sudo apt-get -y install python-pip python-dev python-lxml python-virtualenv python-software-properties
+
+# Python package manager
+sudo pip install setuptools --upgrade
+sudo pip install pip --upgrade
+
+# Set up Python environment
+VIRTUALENV=/home/vagrant/env
+virtualenv --system-site-packages $VIRTUALENV
+echo "source $VIRTUALENV/bin/activate" >> /home/vagrant/.profile
+source $VIRTUALENV/bin/activate
+cd /vagrant
+pip install -r requirements.txt -e .
+
+# Final tweaks
+if [ ! -f /vagrant/config.ini ]; then
+  cp /vagrant/config.example.ini /vagrant/config.ini
+fi
+cat <<PROFILE >>/home/vagrant/.profile
+alias run="(cd /vagrant; python -m watchtower config.ini)"
+echo
+echo "To run, type run"
+echo
+PROFILE
+
+SHELLSCRIPT
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/trusty32"
+
+  config.vm.provision "shell", privileged: false, inline: $bootstrap
+
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+end
