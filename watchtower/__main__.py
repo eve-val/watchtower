@@ -23,6 +23,7 @@ from hashlib import sha256
 from six.moves import queue
 
 from . import db
+from . import model
 from .pinger import Pinger
 from .poller import NotificationPoller
 
@@ -66,6 +67,12 @@ def run(config_file):
 
     pinger.start()
     poller.start()
+
+
+def create_db(config_file):
+    config = load_config(config_file)
+    engine = sqlalchemy.create_engine(config.get('db', 'sqlalchemy.uri'))
+    model.Base.metadata.create_all(engine)
 
 
 def main():
