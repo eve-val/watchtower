@@ -193,5 +193,5 @@ notif_messages = {
     87: "SBU attacked in {solarSystemID} ({shieldValue}/{armorValue}/{hullValue}) by {aggressorCorpID}[{aggressorAllianceID}]",
     88: "XXX Infrastructure Hub under attack {solarSystemID}",
     93: "Customs Office attacked {planetID} ({shieldLevel}) by {aggressorCorpID}[{aggressorAllianceID}]",
-    94: "XXX Customs office has entered reinforced {solarSystemID}",
+    94: "Customs Office reinforced {planetID} by {aggressorCorpID}[{aggressorAllianceID}] exiting at {reinforceExitTime}",
 }

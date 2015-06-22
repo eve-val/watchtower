@@ -16,6 +16,9 @@ from .util.date import utc
 log = __import__('logging').getLogger(__name__)
 
 
+DT_FORMAT = "%Y-%m-%d %H:%M"
+
+
 class Pinger(threading.Thread):
     """Pulls notifications from the queue, formats them, and passes them off to
     IrcSender"""
@@ -48,7 +51,7 @@ class Pinger(threading.Thread):
 
     def format(self, notif):
         return "[{}] ({} ago) {}".format(
-            notif.sent_date.strftime("%Y-%m-%d %H:%M"),
+            notif.sent_date.strftime(DT_FORMAT),
             self.format_ago(notif.sent_date),
             self.format_message(notif)
         )
@@ -101,6 +104,8 @@ class Pinger(threading.Thread):
                     return q.all()[0].itemName
             elif k in ('shieldLevel', 'shieldValue', 'armorValue', 'hullValue'):
                 return int(round(float(v) * 100, 0))
+            elif k == 'reinforceExitTime':
+                return datetime.fromtimestamp(int(v) / 10000000 - 11644473600, utc).strftime(DT_FORMAT)
             else:
                 return v
         except Exception:
