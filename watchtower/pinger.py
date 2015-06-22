@@ -90,8 +90,11 @@ class Pinger(threading.Thread):
     def expand_field(self, k, v):
         try:
             if k.lower().endswith(('allianceid', 'corpid', 'aggressorid')):
-                res = self.api.proxy.eve.CharacterName(ids=str(v))
-                return res.row[0].name
+                if v == 'null':
+                    return 'none'
+                else:
+                    res = self.api.proxy.eve.CharacterName(ids=str(v))
+                    return res.row[0].name
             elif k in ('moonID', 'planetID', 'solarSystemID'):
                 with self.sde_session.transaction() as xact:
                     q = xact.query(MapDenormalize).filter_by(itemID=int(v))
