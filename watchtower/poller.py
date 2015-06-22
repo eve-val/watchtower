@@ -163,12 +163,6 @@ class NotificationPoller(threading.Thread):
             for notif in relevant_notifs:
                 notif['sender_name'] = names.get(notif.senderID)
 
-
-        with open("snapshot/"+c.character.name+".txt", "w") as f:
-            for notif in relevant_notifs:
-                log.info("%r %r", notif.typeID, notif_name.get(notif.typeID))
-                f.write(json.dumps(notif))
-
         # write new notifications to the database!
         with self.db_sess.transaction() as xact:
             for notif in relevant_notifs:
