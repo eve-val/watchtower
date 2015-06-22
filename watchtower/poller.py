@@ -147,7 +147,7 @@ class NotificationPoller(threading.Thread):
 
         # sort so that notifications returned from the same API call are reported
         # in order.
-        relevant_notifs.sort(key=notif.sentDate)
+        relevant_notifs.sort(key=lambda n: n.sentDate)
 
         # enrich notifications with details
         # TODO: maybe if we fail to fetch details, drop it and pick up on the next poll? that sux though. we should do some smart retrying.
